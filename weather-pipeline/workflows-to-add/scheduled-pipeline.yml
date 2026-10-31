@@ -1,0 +1,25 @@
+name: Scheduled pipeline
+
+on:
+  schedule:
+    - cron: "0 6 * * *"      # every day at 06:00 UTC (11:00 in Pakistan)
+  workflow_dispatch:         # adds a manual Run workflow button
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install packages
+        run: pip install -r requirements.txt
+      - name: Run the pipeline
+        run: python -m src.pipeline
+      - name: Save the output
+        uses: actions/upload-artifact@v7
+        with:
+          name: weather-summary
+          path: data/processed/
